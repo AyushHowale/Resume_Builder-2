@@ -1,5 +1,5 @@
 "use client"
-
+import axios from "axios"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,64 +8,132 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { FileText, ArrowLeft, Mail, Lock, User, Eye, EyeOff, Chrome, Github, Linkedin } from "lucide-react"
+import { toast } from "react-hot-toast"
+import { useAuth } from "@/app/context/auth" // Import your auth context
+import { useRouter } from "next/navigation"
+
 
 export default function LoginPage({ onLogin, onBack }) {
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [auth, setAuth] = useAuth(); // Use auth context
+  const router = useRouter(); // ✅ Replaces useNavigate
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
-  })
+  });
   const [signupForm, setSignupForm] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
+  });
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    onLogin({
-      name: "John Doe",
-      email: loginForm.email,
-    })
-
-    setIsLoading(false)
-  }
+  
 
   const handleSignup = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    const { name, email, password, confirmPassword } = signupForm;
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error("Please fill in all fields");
+      return;
+    }
 
-    onLogin({
-      name: signupForm.name,
-      email: signupForm.email,
-    })
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match");
+      return;
+    }
 
-    setIsLoading(false)
-  }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`, {
+        name,
+        email,
+        password,
+      });
+
+      if (res && res.data.success) {
+        toast.success(res.data.message);
+        setSignupForm({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+
+        // ✅ Redirect to login page
+        router.push("/login");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+const handleLogin = async (e) => {
+    e.preventDefault();
+    const { email, password } = loginForm;
+
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
+        email,
+        password,
+      });
+
+      if (res && res.data.success) {
+        toast.success(res.data.message);
+        setAuth({
+          ...auth,
+          user: res.data.user,
+          token: res.data.token,
+        });
+        localStorage.setItem("auth", JSON.stringify(res.data));
+
+        // ✅ Navigate using Next.js router
+        router.push("/");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSocialLogin = async (provider) => {
-    setIsLoading(true)
+    setIsLoading(true);
 
-    // Simulate social login
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     onLogin({
       name: "John Doe",
       email: "john@example.com",
-    })
+    });
 
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
