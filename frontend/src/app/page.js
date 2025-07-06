@@ -57,7 +57,20 @@ export  default function LandingPage({ onGetStarted }) {
       description: "Download your resume as a high-quality PDF, Word document, or share it online instantly.",
     },
   ]
+  const modernResumeImages = [
+  "https://imgs.search.brave.com/oAZDpNEOe10wCGZ47MYWHaUWfkVBvrl-4_xDjiwbY_8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4t/aW1hZ2VzLnJlc3Vt/ZWxhYi5jb20vcGFn/ZXMvbW9kZXJuX3Rl/bXBsYXRlc19zeW5l/cmd5LndlYnA.svg?height=400&width=300&text=Modern+Resume+1&bg=4F46E5&color=white",
+  "/placeholder.svg?height=400&width=300&text=Modern+Resume+2&bg=6366F1&color=white",
+  "/placeholder.svg?height=400&width=300&text=Modern+Resume+3&bg=818CF8&color=white"
+];
 
+   const classicResumeImages = [
+    "/placeholder.svg?height=400&width=300&text=Classic+Resume+1&bg=374151&color=white",
+    "/placeholder.svg?height=400&width=300&text=Classic+Resume+2&bg=6B7280&color=white",
+    "/placeholder.svg?height=400&width=300&text=Classic+Resume+3&bg=9CA3AF&color=white"
+  ];
+
+    const randomModernImage = modernResumeImages[Math.floor(Math.random() * modernResumeImages.length)];
+  const randomClassicImage = classicResumeImages[Math.floor(Math.random() * classicResumeImages.length)];
   const testimonials = [
     {
       name: "Sarah Johnson",
@@ -280,24 +293,24 @@ export  default function LandingPage({ onGetStarted }) {
 
             {/* Enhanced Resume Preview with Real Images */}
             <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
-                {/* Modern Resume Template */}
-                <div className="bg-white rounded-xl shadow-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                  <img
-                    src="/placeholder.svg?height=400&width=300&text=Modern+Resume+Template"
-                    alt="Modern Resume Template"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Modern Resume Template */}
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <img
+              src={randomModernImage}
+              alt="Modern Resume Template"
+              className="w-full h-full object-cover"
+            />
+          </div>
 
                 {/* Classic Resume Template */}
-                <div className="bg-white rounded-xl shadow-2xl overflow-hidden transform -rotate-2 hover:rotate-0 transition-transform duration-300 mt-8">
-                  <img
-                    src="/placeholder.svg?height=400&width=300&text=Classic+Resume+Template"
-                    alt="Classic Resume Template"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+               <div className="bg-white rounded-xl shadow-2xl overflow-hidden transform -rotate-2 hover:rotate-0 transition-transform duration-300 mt-8">
+            <img
+              src={randomClassicImage}
+              alt="Classic Resume Template"
+              className="w-full h-full object-cover"
+            />
+          </div>
               </div>
 
               {/* Floating AI Badge */}
